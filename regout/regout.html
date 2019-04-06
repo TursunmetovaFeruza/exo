@@ -47,10 +47,10 @@
 					                type: "GET",
 					                contentType: "application/json",
 					                success: function (users) {
-					                	
+					                	console.log(users);
 					                    var rows = "";
 					                    $.each(users, function (index,user) {
-					                    	console.log(user);
+					                    	
 					                        // добавляем полученныеuserэлементы в таблицу
 					                          rows += row(user);
 					                    })
