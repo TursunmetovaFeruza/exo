@@ -1,0 +1,131 @@
+<html>
+<head>
+		<title>Autorithation</title>
+		<style type="text/css">
+
+		</style>
+
+		<!-- <link rel="stylesheet"  href="http://localhost:8080/hh.css"> -->
+		    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	</head>
+	
+	<body>
+		<div class="login-page">
+			<div class="form">
+				<form class="register-form" name="registerForm" action="/">
+					<input type"text" name="userName" placeholder="user name"/>
+					<input type="text" name="passw" placeholder="password"/>
+					<input type="text" name="email" placeholder="email"/>
+					<button id="submit">Create</button>
+					
+				</form>
+
+				<form class="login-form" name="check" action="/ch">
+					<input type="text" name="usn" placeholder="user name">
+					<input type="password" name="psw" placeholder="password">
+					<div class="answer">
+					</div>
+					<button id="check">login</button>
+				</form>
+
+				<form class="login-form" name="remind" action="/re">
+					<input type="text" name="email" placeholder="email">
+					<button id="remind">Забыли пароль?</button>
+				</form>
+
+					 <table border=1 class="table table-condensed table-striped table-bordered">
+					        <thead><tr><th>Id</th><th>Имя</th><th>Пароль</th><th>Почта</th><th></th></tr></thead>
+					        <tbody>
+					        </tbody>
+					    </table>
+
+				<script>
+						function GetUsers() {
+							console.log('Heldslfkds');
+					            $.ajax({
+					                url: "/a",
+					                type: "GET",
+					                contentType: "application/json",
+					                success: function (users) {
+					                	
+					                    var rows = "";
+					                    $.each(users, function (index,user) {
+					                    	console.log(user);
+					                        // добавляем полученныеuserэлементы в таблицу
+					                          rows += row(user);
+					                    })
+					                    $("table tbody").append(rows);
+					                 }
+					            });
+					        }
+					       GetUsers();  
+					  var row = function (user) {
+            				return "<tr data-rowid'" + user.id + "'><td>" + user.id + "</td>" +
+                		   "<td>" + user.user_name + "</td> <td>" + user.user_password + "</td><td>" + user.user_email + "</td>" +"<td><a class='editLink' data-id='" +user.id + "'>Изменить</a> | " +
+                		   "<a class='removeLink' data-id='" + user.id + "'>Удалить</a></td></tr>";
+       				  }
+
+						document.getElementById("submit").addEventListener("click", function (e) {
+				         e.preventDefault();
+		            // получаем данные формы
+		                 let registerForm = document.forms["registerForm"];
+			             let userName = registerForm.elements["userName"].value;
+	   		             let passw = registerForm.elements["passw"].value;
+	   		             let email = registerForm.elements["email"].value;
+					            // сериализуем данные в json
+		   	             let Nuser = JSON.stringify({userName: userName, passw: passw,email: email});
+	 		             let request = new XMLHttpRequest();
+					            // посылаем запрос на адрес "/user"
+			             request.open("POST", "/", true);   
+  		                 request.setRequestHeader("Content-Type", "application/json");
+			             request.addEventListener("load", function () {
+					 
+		                 console.log(request.response);   // смотрим ответ сервера
+		                 					             });
+				             request.send(Nuser);
+			         });
+							document.getElementById("check").addEventListener("click", function (e) {
+				         e.preventDefault();
+		            // получаем данные формы
+		                 let signin = document.forms["check"];
+			             let usn = signin.elements["usn"].value;
+	   		             let psw = signin.elements["psw"].value;
+					            // сериализуем данные в json
+		   	             let user = JSON.stringify({usn: usn, psw: psw});
+	 		             let request = new XMLHttpRequest();
+					            // посылаем запрос на адрес "/user"
+			             request.open("POST", "/ch", true);   
+  		                 request.setRequestHeader("Content-Type", "application/json");
+			             request.addEventListener("load", function () {
+					 
+		                 console.log(request.response);   // смотрим ответ сервера
+		                 					             });
+				             request.send(user);
+			         });
+
+							document.getElementById("remind").addEventListener("click", function (e) {
+						         e.preventDefault();
+				                 let remind = document.forms["remind"];
+					             let email = remind.elements["email"].value;
+				   	             $.ajax({
+								  url: '/re/',
+								  contentType: "application/json",
+								  method: 'POST',
+								  data: JSON.stringify({email: email}),
+								  success: function(result){
+								  	var a="";
+								  	 $.each(result, function (index,user) {
+					                 console.log(user);
+					                       $(".answer").append('<p>'+user.user_name+' '+user.user_password+'</p>');
+					                    })  }
+						});  		
+			         });
+							
+							 GetUsers();
+				</script>
+
+			</div>
+		</div>
+		
+	</body>
+	</html>
