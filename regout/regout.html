@@ -58,7 +58,25 @@
 					                 }
 					            });
 					        }
-					       GetUsers();  
+					      function GetUsers() {
+							console.log('Heldslfkds');
+					            $.ajax({
+					                url: "/a",
+					                type: "GET",
+					                contentType: "application/json",
+					                success: function (users) {
+					                	
+					                    var rows = "";
+					                    $.each(users, function (index,user) {
+					                    	console.log(user);
+					                        // добавляем полученныеuserэлементы в таблицу
+					                          rows += row(user);
+					                    })
+					                    $("table tbody").append(rows);
+					                 }
+					            });
+					        }
+					         
 					  var row = function (user) {
             				return "<tr data-rowid'" + user.id + "'><td>" + user.id + "</td>" +
                 		   "<td>" + user.user_name + "</td> <td>" + user.user_password + "</td><td>" + user.user_email + "</td>" +"<td><a class='editLink' data-id='" +user.id + "'>Изменить</a> | " +
@@ -72,17 +90,16 @@
 			             let userName = registerForm.elements["userName"].value;
 	   		             let passw = registerForm.elements["passw"].value;
 	   		             let email = registerForm.elements["email"].value;
-					            // сериализуем данные в json
-		   	             let Nuser = JSON.stringify({userName: userName, passw: passw,email: email});
-	 		             let request = new XMLHttpRequest();
-					            // посылаем запрос на адрес "/user"
-			             request.open("POST", "/", true);   
-  		                 request.setRequestHeader("Content-Type", "application/json");
-			             request.addEventListener("load", function () {
-					 
-		                 console.log(request.response);   // смотрим ответ сервера
-		                 					             });
-				             request.send(Nuser);
+							$.ajax({
+								  url: '/create/',
+								  contentType: "application/json",
+								  method: 'POST',
+								  data: JSON.stringify({userName: userName, passw: passw,email: email}),
+								  success: function(answer){
+								  	var a=answer;
+					                       $(".answerc").append('<p>'+a+'</p>');
+					                    }
+						});  		
 			         });
 							document.getElementById("check").addEventListener("click", function (e) {
 				         e.preventDefault();
@@ -90,17 +107,16 @@
 		                 let signin = document.forms["check"];
 			             let usn = signin.elements["usn"].value;
 	   		             let psw = signin.elements["psw"].value;
-					            // сериализуем данные в json
-		   	             let user = JSON.stringify({usn: usn, psw: psw});
-	 		             let request = new XMLHttpRequest();
-					            // посылаем запрос на адрес "/user"
-			             request.open("POST", "/ch", true);   
-  		                 request.setRequestHeader("Content-Type", "application/json");
-			             request.addEventListener("load", function () {
-					 
-		                 console.log(request.response);   // смотрим ответ сервера
-		                 					             });
-				             request.send(user);
+					       $.ajax({
+								  url: '/check/',
+								  contentType: "application/json",
+								  method: 'POST',
+								  data: JSON.stringify({usn: usn, psw: psw}),
+								  success: function(answer){
+								  	var a=answer;
+					                       $(".answerch").append('<a>'+a+'</a>');
+					                    }
+						});  	   
 			         });
 
 							document.getElementById("remind").addEventListener("click", function (e) {
@@ -108,7 +124,7 @@
 				                 let remind = document.forms["remind"];
 					             let email = remind.elements["email"].value;
 				   	             $.ajax({
-								  url: '/re/',
+								  url: '/remind/',
 								  contentType: "application/json",
 								  method: 'POST',
 								  data: JSON.stringify({email: email}),
@@ -116,10 +132,46 @@
 								  	var a="";
 								  	 $.each(result, function (index,user) {
 					                 console.log(user);
-					                       $(".answer").append('<p>'+user.user_name+' '+user.user_password+'</p>');
+					                       $(".recall").append('<p>'+user.user_name+' '+user.user_password+'</p>');
 					                    })  }
 						});  		
 			         });
+							function DeleteUser(dd){
+								  let id=dd;
+								   console.log(id);
+								   $.ajax({
+					                url: "/delete/",
+					                contentType: "application/json",
+					                method: "DELETE",
+					                data:JSON.stringify({id:id}),
+					                 success: function(answer){
+								  	var a=answer;
+					                       $(".answerch").append('<a>'+a+'</a>');
+					                    }
+					               //  success: function (user) {
+					               //      console.log(user);
+					               //      $("tr[data-rowid='" + user.id + "']").remove();
+				                // }
+				            });
+							}
+							$("body").on("click",".removeLink",function(){
+								var id =$(this).data('id');
+								console.log("helli "+id);
+								DeleteUser(id);
+							})
+
+								$("body").on("click",".regit",function(){
+									console.log("Hello world");
+								$(".register-form").css({"display":"block"});
+								$(".login-form").css({"display":"none"});
+								
+							})
+									$("body").on("click",".logit",function(){
+									console.log("Hello world");
+								$(".register-form").css({"display":"none"});
+								$(".login-form").css({"display":"block"});
+								
+							})
 							
 							 GetUsers();
 				</script>
