@@ -20,29 +20,31 @@ router.post('/',jsonParser,(req,res)=>{
   if(!req.body) return res.sendStatus(400);
    ms.getConnection((err,con)=>{
     if(err) throw err;
-    var q="select user_name,user_email from users where user_name='"+req.body.userName+"' and user_email='"+req.body.email+"'";
+    var q="select id from users where user_name='"+req.body.userName+"' or user_email='"+req.body.email+"'";
     con.query(q,(err,resl)=>{
       if(err) throw err;
-      if(resl.user_name === null && resl.user_email===null){
-           var s="insert into users (user_name,user_password,user_email) values ?";
+      if(resl !== null ){
+        var answer="This account or email is already exist";
+        res.send(answer);          
+
+      }else{
+      
+         var s="insert into users (user_name,user_password,user_email) values ?";
             console.log(req.body);
             var user=[
             [req.body.userName, req.body.passw, req.body.email]
              ];
            con.query(s,[user],(err,result,data)=>{
             if(err) throw err;
-             console.log('Good');
-             res.send('Birds home page');
-    });
-      }else{
-        console.log('Nope');
-      }
+              var answer="Welcome "+req.body.userName+" !";
+             res.send(answer);
+      });}
     })
   
   });
 });
 
-router.post('/re',jsonParser,(req,res)=>{
+router.post('/remind',jsonParser,(req,res)=>{
   var response = null;
   if(!req.body) return res.sendStatus(400);
   console.log(req.body.email);
@@ -66,7 +68,7 @@ router.post('/re',jsonParser,(req,res)=>{
     
    }); 
     
-router.post('/ch',jsonParser,(req,res)=>{
+router.post('/check',jsonParser,(req,res)=>{
   if(!req.body) return res.sendStatus(400);
   console.log("lalla");
     ms.getConnection((err,con)=>{
@@ -76,14 +78,40 @@ router.post('/ch',jsonParser,(req,res)=>{
     con.query(q,(err,result,data)=>{
       if(err) throw err;
       if(result.length === 0)
-        {console.log('Bad');
-        res.send('Birdse');}
+        {
+        var answer="The username or password you entered is incorrect. Check the correctness of the entered data.";
+        res.send(answer);
+        }
       else{
-      console.log('Good');
-       res.send('Hello '+result);}
+      var answer="Correct";
+      res.send(answer);
+      }
     });
    }); 
 });
+
+router.delete('/delete',jsonParser,(req,res)=>{
+   if(!req.body) return res.sendStatus(400);
+     console.log(req.body);
+  console.log("here we are");
+   ms.getConnection((err,con)=>{
+     if(err) throw err;
+    var q="delete from users where id='"+req.body.id+"'";
+    console.log(req.body);
+    con.query(q,(err,result,data)=>{
+      if(err) throw err;
+      if(result.length === 0)
+        {
+        var answer="We have error:)";
+        res.send(answer);
+        }
+      else{
+      var answer="d";
+      res.send(answer);
+      }
+    });
+   }); 
+})
 
 router.get('/',jsonParser,(req,res)=>{
   res.sendFile(__dirname+'/regout.html');
