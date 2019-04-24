@@ -132,7 +132,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 .swiper-container {
 	/*Размер контейнера слайда*/
 
-  width: 75%;
+  width: 675px;
   height: 100vh;
   float: left;
   -webkit-transition: opacity .6s ease, -webkit-transform .3s ease;
